@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/ThanhHai99/SGU_AnToanBaoMat#readme",
   "dependencies": {
-    "sha1": "^1.1.1"
+    "chai": "^4.3.4"
   }
 }
