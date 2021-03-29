@@ -2,7 +2,7 @@
   let crypt = require('crypt'), utf8 = require('charenc').utf8, bin = require('charenc').bin,
 
   // The core
-  sha1 = function (message) {
+  sha1 = (message) => {
     // Convert to byte array
     if (message.constructor == String)
       message = utf8.stringToBytes(message);
@@ -11,18 +11,29 @@
     else if (!Array.isArray(message))
       message = message.toString();
 
+    console.log("Step 1");
+    console.log(message);
+
     // otherwise assume byte array
-    let m  = crypt.bytesToWords(message), l  = message.length * 8, w  = [], H0 =  1732584193, H1 = -271733879, H2 = -1732584194, H3 =  271733878, H4 = -1009589776;
+    let m  = crypt.bytesToWords(message);
+    let l  = message.length * 8;
+    let w  = [];
+    let H0 =  1732584193;
+    let H1 = -271733879;
+    let H2 = -1732584194;
+    let H3 =  271733878;
+    let H4 = -1009589776;
 
     // Padding
     m[l >> 5] |= 0x80 << (24 - l % 32);
     m[((l + 64 >>> 9) << 4) + 15] = l;
 
+    console.log(m);
+
     for (let i = 0; i < m.length; i += 16) {
       let a = H0, b = H1, c = H2, d = H3, e = H4;
       for (let j = 0; j < 80; j++) {
-        if (j < 16)
-          w[j] = m[i + j];
+        if (j < 16) w[j] = m[i + j];
         else {
           let n = w[j - 3] ^ w[j - 8] ^ w[j - 14] ^ w[j - 16];
           w[j] = (n << 1) | (n >>> 31);
@@ -36,7 +47,7 @@
   },
 
   // Public API
-  api = function (message, options) {
+  api = (message, options) => {
     let digestbytes = crypt.wordsToBytes(sha1(message));
     // return (options && options.asBytes) ? digestbytes : (options && options.asString) ? bin.bytesToString(digestbytes) : crypt.bytesToHex(digestbytes);
     return crypt.bytesToHex(digestbytes);
