@@ -74,9 +74,9 @@ function not(stringA) {
 }
 
 function binaryAddition(stringA, stringB) {
-    const numA = parseInt(stringA, 2);
-    const numB = parseInt(stringB, 2);
-    let sum = (numA + numB).toString(2);
+    const numA = parseInt(stringA, 2); //bin to dec
+    const numB = parseInt(stringB, 2); //bin to dec
+    let sum = (numA + numB).toString(2); //plus by dec and convert to bin
     const length = stringA.length;
 
     while (sum.length < stringA.length) {
