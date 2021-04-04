@@ -9,6 +9,7 @@ function sha1(text) {
     let h4 = '11000011110100101110000111110000'; //C3D2E1F0 (hex)
 
     //create array with ascii codes of each character
+    // console.log("Plaintext: " + text);
     // console.log("B1: Tạo mảng với mã ASCII của mỗi kí tự.");
     const asciiText = text.split('').map((letter) => utils.charToASCII(letter));
     // console.log(asciiText);
@@ -19,7 +20,7 @@ function sha1(text) {
     // console.log(binaryText);
     
     // padded with zeros at the front so they are 8 characters long as necessary
-    // console.log("B3: Nối chuỗi '0' cho đến khi chúng có độ dài 8 bits.");
+    // console.log("B3: Nối chuỗi '0' vào trước chuỗi cho đến khi chúng có độ dài 8 bits.");
     let binary8bit = binaryText.map((num) => utils.padZero(num, 8));
     // console.log(binary8bit);
 
@@ -28,7 +29,7 @@ function sha1(text) {
     let numString = binary8bit.join('') + '1';
     // console.log(numString);
 
-    //pad the array with zeros until it is modulo 512 === 448 <=> l = n*512 + 448 (n, l is integer) <=> l % 512 != 448
+    //pad the array with zeros until it is modulo 512 === 448 <=> l = n*512 + 448 (n, l is integer) <=> l % 512 == 448
     // console.log("B5: Thêm '0' đến khi nó là modulo 512 === 448");
     while (numString.length % 512 !== 448) {
         numString += '0';
@@ -43,6 +44,7 @@ function sha1(text) {
     // console.log("B6: nối độ dài của biến biểu diễn nhị phân 8 bit ban đầu vào chuỗi, độ dài được đệm bằng các số không để nó có độ dài 64bit.");
     const length = binary8bit.join('').length;
     const binaryLength = utils.asciiToBinary(length);
+    // console.log(binaryLength);
     const paddedBinLength = utils.padZero(binaryLength, 64);
     numString += paddedBinLength;
     // console.log(numString);
@@ -66,7 +68,7 @@ function sha1(text) {
      * sử dụng các phép toán bitwise XOR để mở rộng các mảng đó thành các mảng gồm 80 từ 32 ký tự.
      */
 
-    console.log("B9: lặp từng mảng trong 'chunks' gồm 16-word và dùng phép toán bitwise XOR để mở rộng các mảng đó thành các mảng gồm 80bit từ 32bit.");
+    // console.log("B9: Lặp từng mảng trong 'chunks' gồm 16-word và dùng phép toán bitwise XOR để mở rộng các mảng đó thành các mảng gồm 80bit từ 32bit.");
     const words80 = words.map((array) => {
         /**
          * loop for each 16-word chunk that will extend it to be a 'chunk' array of 80 words,
@@ -95,16 +97,17 @@ function sha1(text) {
     // console.log(words80);
 
     //large loop where we use bitwise operations on our initial constants and word chunks and continually reassign them
-    console.log("B10: ");
+    // console.log("B10: Lặp words80");
     for (let i = 0; i < words80.length; i++) {
         //initializing to the constants set at the beginning of the function
-        let a = h0;
-        let b = h1;
-        let c = h2;
-        let d = h3;
-        let e = h4;
+        let a = h0; //67452301
+        let b = h1; //efcdab89
+        let c = h2; //98badcfe
+        let d = h3; //10325476
+        let e = h4; //c3d2e1f0
 
         //loop 80 times, and perform different bitwise operations and initialize a different k constant depending on where in the loop you are
+        // console.log("B11: Lặp từng phần tử trong từng mảng thuộc words80");
         for (let j = 0; j < 80; j++) {
             let f, k;
             if (j < 20) { //0 <= t <= 19
@@ -128,20 +131,21 @@ function sha1(text) {
                 const BxorC = utils.xOR(b, c);
                 f = utils.xOR(BxorC, d);
                 k = '11001010011000101100000111010110'; //ca62c1d6
-            }
+            };
             
             /**
              * this occurs in every one of the loops, regardless what count j is at,
              * and is adding together then reassigning all of the constants,
              * which will then be used again in the next (of 80) iterations through the loop
              */
+            // console.log("B12: Dùng hàm nén");
             const word = words80[i][j];
             const tempA = utils.binaryAddition(utils.leftRotate(a, 5), f);
             const tempB = utils.binaryAddition(tempA, e);
             const tempC = utils.binaryAddition(tempB, k);
             let temp = utils.binaryAddition(tempC, word);
-
             temp = utils.truncate(temp, 32);
+
             e = d;
             d = c;
             c = utils.leftRotate(b, 30);
@@ -150,6 +154,7 @@ function sha1(text) {
         }
 
         //after going through 80 times, add together your constants and truncate them to a length of 32
+        // console.log("B13: Sau mỗi lần lặp 80 lần, cộng các hằng số lại và cắt chúng thành độ dài 32");
         h0 = utils.truncate(utils.binaryAddition(h0, a), 32);
         h1 = utils.truncate(utils.binaryAddition(h1, b), 32);
         h2 = utils.truncate(utils.binaryAddition(h2, c), 32);
@@ -157,6 +162,8 @@ function sha1(text) {
         h4 = utils.truncate(utils.binaryAddition(h4, e), 32);
     }
     //convert each variable into hexadecimal notation and then concatenate those and return your final hash value
+    // console.log("B14: Chuyển binary --> hexadecimal và nối thành một chuỗi");
+    // console.log([h0, h1, h2, h3, h4].map((string) => utils.binaryToHex(string)).join(''));
     return [h0, h1, h2, h3, h4].map((string) => utils.binaryToHex(string)).join('');
 };
 
