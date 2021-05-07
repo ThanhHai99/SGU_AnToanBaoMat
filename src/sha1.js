@@ -10,54 +10,67 @@ function sha1(text) {
 
     //create array with ascii codes of each character
     // console.log("Plaintext: " + text);
-    // console.log("B1: Tạo mảng với mã ASCII của mỗi kí tự.");
+    console.log("B0: Chia input ra từng kí tự. ");
+    console.log(text.split(""));
+    console.log("==================================================================");
+
+    console.log("B1: Tạo mảng với mã ASCII của mỗi kí tự.");
     const asciiText = text.split('').map((letter) => utils.charToASCII(letter));
-    // console.log(asciiText);
+    console.log(asciiText);
+    console.log("==================================================================");
+
 
     // create array of binary representations of ascii codes of each character
-    // console.log("B2: Tạo mảng biểu diễn mã nhị phân của mã ASCII của mỗi kí tự.");
+    console.log("B2: Tạo mảng biểu diễn mã nhị phân của mã ASCII của mỗi kí tự.");
     let binaryText = asciiText.map((num) => utils.asciiToBinary(num));
-    // console.log(binaryText);
+    console.log(binaryText);
+    console.log("==================================================================");
     
     // padded with zeros at the front so they are 8 characters long as necessary
-    // console.log("B3: Nối chuỗi '0' vào trước chuỗi cho đến khi chúng có độ dài 8 bits.");
+    console.log("B3: Nối chuỗi '0' vào trước chuỗi cho đến khi chúng có độ dài 8 bits.");
     let binary8bit = binaryText.map((num) => utils.padZero(num, 8));
-    // console.log(binary8bit);
+    console.log(binary8bit);
+    console.log("==================================================================");
 
     // join the array into a singular string appended with a 1
-    // console.log("B4: Nối mảng thành chuỗi và thêm '1' cuối chuỗi.");
+    console.log("B4: Nối mảng thành chuỗi và thêm '1' cuối chuỗi.");
     let numString = binary8bit.join('') + '1';
-    // console.log(numString);
+    console.log(numString);
+    console.log("==================================================================");
 
     //pad the array with zeros until it is modulo 512 === 448 <=> l = n*512 + 448 (n, l is integer) <=> l % 512 == 448
-    // console.log("B5: Thêm '0' đến khi nó là modulo 512 === 448");
+    console.log("B5: Thêm '0' đến khi nó là modulo 512 === 448");
     while (numString.length % 512 !== 448) {
         numString += '0';
     };
-    // console.log(numString);
+    console.log(numString);
+    console.log("==================================================================");
 
     /**
      * append the length of the original 8 bit binary representation of the message to your string,
      * padded with zeros so it is 64 characters in length
      */
     //SHA-1 will not support strings above 2^64 - 1 bits, so the length will never be greater than or equal to 64
-    // console.log("B6: nối độ dài của biến biểu diễn nhị phân 8 bit ban đầu vào chuỗi, độ dài được đệm bằng các số không để nó có độ dài 64bit.");
+    console.log("B6: nối độ dài của biến biểu diễn nhị phân 8 bit ban đầu vào chuỗi, độ dài được đệm bằng các số không để nó có độ dài 64bit.");
     const length = binary8bit.join('').length;
     const binaryLength = utils.asciiToBinary(length);
     // console.log(binaryLength);
     const paddedBinLength = utils.padZero(binaryLength, 64);
     numString += paddedBinLength;
-    // console.log(numString);
+    console.log(numString);
+    console.log("==================================================================");
 
     //split that binary string into chunks of 512
-    // console.log("B7: Chia chuỗi nhị phân đó thành các phần có 512 bit");
+    console.log("B7: Chia chuỗi nhị phân đó thành các phần có 512 bit");
     const chunks = utils.stringSplit(numString, 512);
-    // console.log(chunks);
+    console.log(chunks);
+    console.log("==================================================================");
 
     //split each of those chunks into 16 'words' (within subarrays) of 32 characters each
-    // console.log("B8: Chia mỗi phần trong số các phần đó thành 16 'words' mỗi 'words' có 32 bit");
+    console.log("B8: Chia mỗi phần trong số các phần đó thành 16 'words' mỗi 'words' có 32 bit");
     const words = chunks.map((chunk) => utils.stringSplit(chunk, 32));
-    // console.log(words);
+    console.log(words);
+    console.log("==================================================================");
 
     /**
      * this step will loop through each of those arrays 'chunks' of 16 words and
@@ -68,7 +81,7 @@ function sha1(text) {
      * sử dụng các phép toán bitwise XOR để mở rộng các mảng đó thành các mảng gồm 80 từ 32 ký tự.
      */
 
-    // console.log("B9: Lặp từng mảng trong 'chunks' gồm 16-word và dùng phép toán bitwise XOR để mở rộng các mảng đó thành các mảng gồm 80bit từ 32bit.");
+    console.log("B9: Lặp từng mảng trong 'chunks' gồm 16-word và dùng phép toán bitwise XOR để mở rộng các mảng đó thành các mảng gồm 80bit từ 32bit.");
     const words80 = words.map((array) => {
         /**
          * loop for each 16-word chunk that will extend it to be a 'chunk' array of 80 words,
@@ -94,10 +107,12 @@ function sha1(text) {
         return array;
     });
 
-    // console.log(words80);
+    console.log(words80);
+    console.log("==================================================================");
 
     //large loop where we use bitwise operations on our initial constants and word chunks and continually reassign them
-    // console.log("B10: Lặp words80");
+    console.log("B10: Lặp words80");
+    console.log("==================================================================");
     for (let i = 0; i < words80.length; i++) {
         //initializing to the constants set at the beginning of the function
         let a = h0; //67452301
@@ -107,7 +122,8 @@ function sha1(text) {
         let e = h4; //c3d2e1f0
 
         //loop 80 times, and perform different bitwise operations and initialize a different k constant depending on where in the loop you are
-        // console.log("B11: Lặp từng phần tử trong từng mảng thuộc words80");
+        console.log("B11: Lặp từng phần tử trong từng mảng thuộc words80");
+        console.log("==================================================================");
         for (let j = 0; j < 80; j++) {
             let f, k;
             if (j < 20) { //0 <= t <= 19
@@ -139,6 +155,7 @@ function sha1(text) {
              * which will then be used again in the next (of 80) iterations through the loop
              */
             // console.log("B12: Dùng hàm nén");
+            // console.log("==================================================================");
             const word = words80[i][j];
             const tempA = utils.binaryAddition(utils.leftRotate(a, 5), f);
             const tempB = utils.binaryAddition(tempA, e);
@@ -154,16 +171,24 @@ function sha1(text) {
         }
 
         //after going through 80 times, add together your constants and truncate them to a length of 32
-        // console.log("B13: Sau mỗi lần lặp 80 lần, cộng các hằng số lại và cắt chúng thành độ dài 32");
+        console.log("B13: Sau mỗi lần lặp 80 lần, cộng các hằng số lại và cắt chúng thành độ dài 32");
         h0 = utils.truncate(utils.binaryAddition(h0, a), 32);
         h1 = utils.truncate(utils.binaryAddition(h1, b), 32);
         h2 = utils.truncate(utils.binaryAddition(h2, c), 32);
         h3 = utils.truncate(utils.binaryAddition(h3, d), 32);
         h4 = utils.truncate(utils.binaryAddition(h4, e), 32);
+        console.log("h0: " + h0);
+        console.log("h1: " + h1);
+        console.log("h2: " + h2);
+        console.log("h3: " + h3);
+        console.log("h4: " + h4);
+
+        console.log("==================================================================");
     }
     //convert each variable into hexadecimal notation and then concatenate those and return your final hash value
-    // console.log("B14: Chuyển binary --> hexadecimal và nối thành một chuỗi");
-    // console.log([h0, h1, h2, h3, h4].map((string) => utils.binaryToHex(string)).join(''));
+    console.log("B14: Chuyển binary --> hexadecimal và nối thành một chuỗi");
+    console.log([h0, h1, h2, h3, h4].map((string) => utils.binaryToHex(string)).join(''));
+    console.log("==================================================================");
     return [h0, h1, h2, h3, h4].map((string) => utils.binaryToHex(string)).join('');
 };
 
